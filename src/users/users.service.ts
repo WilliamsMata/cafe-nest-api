@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PaginationDto } from '../common/dtos';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UsersService {
@@ -11,6 +11,9 @@ export class UsersService {
 
     const [users, total] = await Promise.all([
       this.prisma.user.findMany({
+        where: {
+          status: true,
+        },
         orderBy: {
           createdAt: 'asc',
         },
@@ -20,6 +23,11 @@ export class UsersService {
       this.prisma.user.count(),
     ]);
 
-    return { total, users };
+    const usersWhitoutPassword = users.map((user) => {
+      delete user.password;
+      return user;
+    });
+
+    return { total, users: usersWhitoutPassword };
   }
 }

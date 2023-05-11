@@ -23,6 +23,8 @@ model User {
   role     Role    @default(USER)
   status   Boolean @default(true)
   google   Boolean @default(false)
+
+  @@index([status, role, name])
 }
 
 enum Role {
