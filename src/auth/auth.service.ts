@@ -67,6 +67,10 @@ export class AuthService {
     return this.signToken(user.id, user.email);
   }
 
+  revalidateJwt(id: string, email: string) {
+    return this.signToken(id, email);
+  }
+
   async signToken(
     userId: string,
     email: string,
@@ -80,9 +84,11 @@ export class AuthService {
     const secret = this.config.get('JWT_SECRET');
 
     const token = await this.jwt.signAsync(payload, {
-      expiresIn: '2h',
+      expiresIn: '24h',
       secret,
     });
+
+    console.log({ token });
 
     return {
       access_token: token,
