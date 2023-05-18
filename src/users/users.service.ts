@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PaginationDto } from '../common/dtos';
 import { PrismaService } from '../prisma/prisma.service';
+import { EditUserDto } from './dto';
 
 @Injectable()
 export class UsersService {
@@ -29,5 +30,16 @@ export class UsersService {
     });
 
     return { total, users: usersWhitoutPassword };
+  }
+
+  async editMe(id: string, dto: EditUserDto) {
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: { ...dto },
+    });
+
+    delete user.password;
+
+    return user;
   }
 }

@@ -88,8 +88,6 @@ export class AuthService {
       secret,
     });
 
-    console.log({ token });
-
     return {
       access_token: token,
     };
