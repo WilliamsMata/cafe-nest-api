@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import { validate as uuidValidate } from 'uuid';
 import { User } from '@prisma/client';
 import { UsersService } from './users.service';
 import { JwtGuard } from '../auth/guard';
@@ -19,6 +29,13 @@ export class UsersController {
   @Get('me')
   getMe(@GetUser() user: User) {
     return user;
+  }
+
+  @Get(':id')
+  getUserById(@Param('id') id: string) {
+    if (!uuidValidate(id)) throw new BadRequestException('Invalid UUID');
+
+    return this.usersService.getUserById(id);
   }
 
   @Patch()
