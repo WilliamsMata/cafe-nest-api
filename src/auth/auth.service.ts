@@ -6,6 +6,7 @@ import * as argon from 'argon2';
 
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto, SignUpDto } from './dto';
+import { JwtPayload } from './interfaces';
 
 @Injectable()
 export class AuthService {
@@ -80,10 +81,7 @@ export class AuthService {
     email: string,
   ): Promise<{ access_token: string }> {
     // JWT Payload
-    const payload = {
-      sub: userId,
-      email,
-    };
+    const payload: JwtPayload = { userId, email };
 
     const secret = this.config.get('JWT_SECRET');
 
