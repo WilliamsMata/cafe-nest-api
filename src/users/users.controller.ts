@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -8,13 +7,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { validate as uuidValidate } from 'uuid';
 import { User } from '@prisma/client';
 import { UsersService } from './users.service';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from 'src/auth/decorator';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { EditUserDto } from './dto';
+import { ChangePasswordDto, EditUserDto } from './dto';
 
 @UseGuards(JwtGuard)
 @Controller('users')
@@ -33,13 +31,19 @@ export class UsersController {
 
   @Get(':id')
   getUserById(@Param('id') id: string) {
-    if (!uuidValidate(id)) throw new BadRequestException('Invalid UUID');
-
     return this.usersService.getUserById(id);
   }
 
   @Patch()
   editMe(@GetUser('id') id: string, @Body() dto: EditUserDto) {
     return this.usersService.editMe(id, dto);
+  }
+
+  @Patch('change-password')
+  changeUserPassword(
+    @GetUser('id') id: string,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.usersService.changeUserPassword(id, dto);
   }
 }

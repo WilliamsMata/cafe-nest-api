@@ -55,6 +55,10 @@ export class AuthService {
       throw new ForbiddenException('Incorrect credentials');
     }
 
+    if (user.status === false) {
+      throw new ForbiddenException('The user has been removed');
+    }
+
     // compare password
     const passwordMatches = await argon.verify(user.password, dto.password);
 
