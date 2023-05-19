@@ -28,15 +28,15 @@ export class UsersService {
         skip: (page - 1) * limit,
         take: limit,
       }),
-      this.prisma.user.count(),
+      this.prisma.user.count({ where: { status: true } }),
     ]);
 
-    const usersWhitoutPassword = users.map((user) => {
+    const userWithoutPassword = users.map((user) => {
       delete user.password;
       return user;
     });
 
-    return { total, users: usersWhitoutPassword };
+    return { total, users: userWithoutPassword };
   }
 
   async getUserById(id: string) {
@@ -81,6 +81,21 @@ export class UsersService {
         message: 'An error has occurred, please try again',
       };
     }
+  }
+
+  async deleteUserById(id: string) {
+    await this.getUserByIdPrivate(id);
+
+    const user = await this.prisma.user.update({
+      where: { id },
+      data: { status: false },
+    });
+
+    return {
+      isOk: true,
+      message: 'User have been deleted',
+      user,
+    };
   }
 
   private async getUserByIdPrivate(id: string): Promise<User> {

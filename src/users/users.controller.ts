@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -9,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { UsersService } from './users.service';
-import { JwtGuard } from '../auth/guard';
+import { HaveRoleGuard, JwtGuard } from '../auth/guard';
 import { GetUser } from 'src/auth/decorator';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { ChangePasswordDto, EditUserDto } from './dto';
@@ -45,5 +46,11 @@ export class UsersController {
     @Body() dto: ChangePasswordDto,
   ) {
     return this.usersService.changeUserPassword(id, dto);
+  }
+
+  @Delete(':id')
+  @UseGuards(new HaveRoleGuard('ADMIN'))
+  deleteUser(@Param('id') id: string) {
+    return this.usersService.deleteUserById(id);
   }
 }
